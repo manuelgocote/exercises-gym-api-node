@@ -1,0 +1,25 @@
+# Node modules
+node_modules/
+
+# TypeScript build output
+dist/
+build/
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+
+# Optional TypeScript global types
+*.d.ts
