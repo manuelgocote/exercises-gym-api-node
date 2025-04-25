@@ -1,4 +1,4 @@
-import { ExerciseRepository } from "../repositories/exercise.repository";
+import { ExerciseRepository } from "../..";
 
 export class DeleteExercise {
   constructor(private readonly repository: ExerciseRepository) {}

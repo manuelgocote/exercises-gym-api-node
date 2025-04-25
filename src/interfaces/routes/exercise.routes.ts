@@ -10,7 +10,11 @@ import {
   MuscleGroup,
 } from "../../domain";
 import { ExerciseController } from "../controllers/exercise.controller";
+
 import { MongoExerciseRepository } from "../../infrastructure/database/repositories/mongodb.repository";
+
+import { authMiddleware } from "../../middleware/auth.middleware";
+import { adminMiddleware } from "../../middleware/admin.middleware";
 
 const router = Router();
 
@@ -29,13 +33,14 @@ const controller = new ExerciseController(
   deleteExercise
 );
 
-// Rutas
-router.post("/", controller.create);
+// Rutas públicas
 router.get("/", controller.getAll);
 router.get("/:id", controller.getById);
-//router.get("/", controller.getByMuscleGroup);
-router.put("/:id", controller.update);
-router.delete("/:id", controller.delete);
+
+// Rutas protegidas (solo usuarios autenticados con rol admin)
+router.post("/", authMiddleware, adminMiddleware, controller.create);
+router.put("/:id", authMiddleware, adminMiddleware, controller.update);
+router.delete("/:id", authMiddleware, adminMiddleware, controller.delete);
 
 const exercises: Exercise[] = [
   {

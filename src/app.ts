@@ -1,19 +1,11 @@
 import express from "express";
-import { connectToMongo } from "./config/mongodb";
+import authRoutes from "./interfaces/routes/auth.routes";
 import exerciseRoutes from "./interfaces/routes/exercise.routes";
 
 const app = express();
-const PORT = 3000;
-
-// Middlewares
 app.use(express.json());
 
-// Rutas
-app.use("/exercises", exerciseRoutes);
+app.use("/auth", authRoutes);
+app.use("/exercises", exerciseRoutes); // Asegúrate de que las rutas de ejercicio estén bien integradas.
 
-// Conectar a Mongo y levantar servidor
-connectToMongo().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-  });
-});
+export default app;

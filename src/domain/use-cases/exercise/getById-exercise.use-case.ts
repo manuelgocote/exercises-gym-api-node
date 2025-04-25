@@ -1,5 +1,5 @@
-import { Exercise } from "../entities/exercise.entity";
-import { ExerciseRepository } from "../repositories/exercise.repository";
+import { Exercise, ExerciseRepository } from "../..";
+
 
 export class GetExerciseById {
     constructor(private readonly repository: ExerciseRepository) {}

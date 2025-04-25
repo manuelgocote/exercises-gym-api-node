@@ -1,5 +1,4 @@
-import { Exercise, MuscleGroup } from "../entities/exercise.entity";
-import { ExerciseRepository } from "../repositories/exercise.repository";
+import { Exercise, ExerciseRepository, MuscleGroup } from "../..";
 
 export class UpdateExercise {
   constructor(private readonly repository: ExerciseRepository) {}
