@@ -40,7 +40,36 @@ const swaggerDefinition = {
         },
         required: ["name", "description", "muscleGroup"],
       },
-    },
+      User: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          username: { type: "string" },
+          email: { type: "string", format: "email" },
+          password: { type: "string", format: "password" },
+          role: {
+            type: "string",
+            enum: ["user", "admin"],
+          },
+        },
+        required: ["username", "email", "password", "role"],
+      },
+      LoginRequest: {
+        type: "object",
+        properties: {
+          email: { type: "string", format: "email" },
+          password: { type: "string", format: "password" },
+        },
+        required: ["email", "password"],
+      },
+      LoginResponse: {
+        type: "object",
+        properties: {
+          token: { type: "string" },
+        },
+      },
+    
+  },
     securitySchemes: {
       bearerAuth: {
         type: "http",

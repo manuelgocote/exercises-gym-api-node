@@ -1,24 +1,20 @@
-import express, { Router, Request, Response } from "express";
-
+import express, { Router } from "express";
 import {
   CreateExercise,
   GetAllExercises,
   GetExerciseById,
   DeleteExercise,
   UpdateExercise,
-  Exercise,
   MuscleGroup,
+  Exercise,
 } from "../../domain";
 import { ExerciseController } from "../controllers/exercise.controller";
-
 import { MongoExerciseRepository } from "../../infrastructure/database/repositories/mongodb.repository";
-
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { adminMiddleware } from "../../middleware/admin.middleware";
 
 const router = Router();
 
-// Inyección de dependencias
 const repository = new MongoExerciseRepository();
 const createExercise = new CreateExercise(repository);
 const getAllExercises = new GetAllExercises(repository);
@@ -37,14 +33,14 @@ const controller = new ExerciseController(
  * @swagger
  * tags:
  *   name: Exercises
- *   description: API para gestión de ejercicios
+ *   description: Endpoints for managing gym exercises
  */
 
 /**
  * @swagger
  * /exercises:
  *   get:
- *     summary: Obtener todos los ejercicios
+ *     summary: Get all exercises
  *     tags: [Exercises]
  *     parameters:
  *       - in: query
@@ -52,10 +48,10 @@ const controller = new ExerciseController(
  *         schema:
  *           type: string
  *           enum: [pectoral, biceps, triceps, hombro, espalda, piernas, abdomen, gluteos, gemelos]
- *         description: Grupo muscular para filtrar los ejercicios
+ *         description: Filter exercises by muscle group
  *     responses:
  *       200:
- *         description: Lista de ejercicios
+ *         description: List of exercises
  *         content:
  *           application/json:
  *             schema:
@@ -63,12 +59,13 @@ const controller = new ExerciseController(
  *               items:
  *                 $ref: '#/components/schemas/Exercise'
  */
+router.get("/", controller.getAll);
 
 /**
  * @swagger
  * /exercises/{id}:
  *   get:
- *     summary: Obtener un ejercicio por ID
+ *     summary: Get exercise by ID
  *     tags: [Exercises]
  *     parameters:
  *       - in: path
@@ -76,19 +73,24 @@ const controller = new ExerciseController(
  *         required: true
  *         schema:
  *           type: string
- *         description: ID del ejercicio
+ *         description: ID of the exercise
  *     responses:
  *       200:
- *         description: Ejercicio encontrado
+ *         description: Exercise found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Exercise'
  *       404:
- *         description: Ejercicio no encontrado
+ *         description: Exercise not found
  */
+router.get("/:id", controller.getById);
 
 /**
  * @swagger
  * /exercises:
  *   post:
- *     summary: Crear un nuevo ejercicio
+ *     summary: Create a new exercise
  *     tags: [Exercises]
  *     security:
  *       - bearerAuth: []
@@ -100,16 +102,19 @@ const controller = new ExerciseController(
  *             $ref: '#/components/schemas/Exercise'
  *     responses:
  *       201:
- *         description: Ejercicio creado
+ *         description: Exercise created
  *       400:
- *         description: Datos inválidos
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
  */
+router.post("/", authMiddleware, adminMiddleware, controller.create);
 
 /**
  * @swagger
  * /exercises/{id}:
  *   put:
- *     summary: Actualizar un ejercicio existente
+ *     summary: Update an exercise
  *     tags: [Exercises]
  *     security:
  *       - bearerAuth: []
@@ -119,7 +124,7 @@ const controller = new ExerciseController(
  *         required: true
  *         schema:
  *           type: string
- *         description: ID del ejercicio
+ *         description: ID of the exercise to update
  *     requestBody:
  *       required: true
  *       content:
@@ -128,16 +133,19 @@ const controller = new ExerciseController(
  *             $ref: '#/components/schemas/Exercise'
  *     responses:
  *       200:
- *         description: Ejercicio actualizado
+ *         description: Exercise updated
  *       404:
- *         description: Ejercicio no encontrado
+ *         description: Exercise not found
+ *       401:
+ *         description: Unauthorized
  */
+router.put("/:id", authMiddleware, adminMiddleware, controller.update);
 
 /**
  * @swagger
  * /exercises/{id}:
  *   delete:
- *     summary: Eliminar un ejercicio
+ *     summary: Delete an exercise
  *     tags: [Exercises]
  *     security:
  *       - bearerAuth: []
@@ -147,54 +155,15 @@ const controller = new ExerciseController(
  *         required: true
  *         schema:
  *           type: string
- *         description: ID del ejercicio
+ *         description: ID of the exercise to delete
  *     responses:
  *       204:
- *         description: Ejercicio eliminado
+ *         description: Exercise deleted successfully
  *       404:
- *         description: Ejercicio no encontrado
+ *         description: Exercise not found
+ *       401:
+ *         description: Unauthorized
  */
-
-// Rutas públicas
-router.get("/", controller.getAll);
-router.get("/:id", controller.getById);
-
-// Rutas protegidas (solo usuarios autenticados con rol admin)
-router.post("/", authMiddleware, adminMiddleware, controller.create);
-router.put("/:id", authMiddleware, adminMiddleware, controller.update);
 router.delete("/:id", authMiddleware, adminMiddleware, controller.delete);
-
-// const exercises: Exercise[] = [
-//   {
-//     name: "Push Up",
-//     description: "A bodyweight exercise targeting the chest.",
-//     muscleGroup: [MuscleGroup.PECTORAL, MuscleGroup.TRICEPS],
-//   },
-//   {
-//     name: "Squat",
-//     description: "A lower-body exercise that targets the quads and glutes.",
-//     muscleGroup: [MuscleGroup.PIERNAS, MuscleGroup.GLUTEOS],
-//   },
-//   {
-//     name: "Deadlift",
-//     description: "A full-body exercise focusing on posterior chain muscles.",
-//     muscleGroup: [MuscleGroup.ESPALDA, MuscleGroup.PIERNAS],
-//   },
-//   // Añadir más datos aquí...
-// ];
-
-// async function insertExercises() {
-//   try {
-//     for (let exercise of exercises) {
-//       await repository.create(exercise);
-//     }
-//     console.log("Datos insertados correctamente");
-//   } catch (error) {
-//     console.error("Error al insertar datos:", error);
-//   }
-// }
-
-// //insertExercises();
-// // console.log(typeof controller.create); //
 
 export default router;
