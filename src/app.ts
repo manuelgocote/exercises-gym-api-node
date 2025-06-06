@@ -1,4 +1,5 @@
 import express from "express";
+import cors from 'cors';
 import authRoutes from "./interfaces/routes/auth.routes";
 import exerciseRoutes from "./interfaces/routes/exercise.routes";
 
@@ -6,7 +7,10 @@ import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { swaggerOptions } from "./swagger/swagger.config";
 
+
+
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // Swagger
