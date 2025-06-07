@@ -2,6 +2,8 @@ import express from "express";
 import cors from 'cors';
 import authRoutes from "./interfaces/routes/auth.routes";
 import exerciseRoutes from "./interfaces/routes/exercise.routes";
+import muscleGroupRoute from './interfaces/routes/muscle-group.routes';
+
 
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
@@ -20,5 +22,8 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use("/auth", authRoutes);
 app.use("/exercises", exerciseRoutes); // Asegúrate de que las rutas de ejercicio estén bien integradas.
+
+app.use('/muscle-groups', muscleGroupRoute);
+
 
 export default app;
